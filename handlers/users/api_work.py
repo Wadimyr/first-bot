@@ -17,3 +17,5 @@ async def api_cmd(message: types.Message):
         f'<a href="https://vk.com/feed">Дата отправки сообщения</a> - {message.date}'
         # Получаем из message Дату отправки сообщения (от пользователя)
     )
+
+# test
