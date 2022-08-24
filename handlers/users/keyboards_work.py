@@ -40,3 +40,21 @@ async def random_quote(call: types.CallbackQuery):
     quote = random.choice(quotes)
 
     await call.message.edit_text(quote, reply_markup=back)
+@dp.callback_query_handler(Text(equals='empty'))
+async def do_nothing(call:types.CallbackQuery):
+    await call.message.edit_text("Здесь ничего нет", reply_markup=back)
+
+
+@dp.callback_query_handler(Text(equals="test"))
+async def newtest(call:types.CallbackQuery):
+    await call.message.edit_text("пимпирим", reply_markup=back)
+
+
+@dp.callback_query_handler(Text(equals="smile"))
+async def smile(call:types.CallbackQuery):
+
+    quotes = ["😀", '🫠', "🤯"]
+
+    quote = random.choice(quotes)
+    await call.message.edit_text(quote, reply_markup=back)
+
