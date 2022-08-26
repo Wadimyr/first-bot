@@ -20,11 +20,12 @@ async def random_number(call: types.CallbackQuery):
     await call.message.edit_text(f'Твое рандомное число - {number}', reply_markup=back)
 
 
-@dp.callback_query_handler(Text(equals='back'))
-async def go_back(call: types.CallbackQuery):
+@dp.callback_query_handler(Text(equals='back'), state='*')
+async def go_back(call: types.CallbackQuery, state: FSMContext):
     """
     Обработчик кнопки "Назад"
     """
+    await state.reset_state(True)
     await call.message.delete()
     await start_cmd(message=call.message)
 
@@ -106,19 +107,57 @@ async def get_q2(message: types.Message, state: FSMContext):
         }
     )
     await state.set_state(GetInfo.q3)
+
+
 @dp.message_handler(state=GetInfo.q3)
-async def get_q3(message:types.Message, state: FSMContext):
+async def get_q3(message: types.Message, state: FSMContext):
     data = await state.get_data()
-    text = message.text
+
     message_id = data.get('message_id')
 
     await dp.bot.delete_message(chat_id=message.chat.id, message_id=message_id)
 
-    mes = await message.answer('Тест завершен!'
+    q1 = data.get('question_1')
+    q2 = data.get('question_2')
+    q3 = message.text
 
+    correct_q1 = data.get('correct_answer_1')
+    correct_q2 = data.get('correct_answer_2')
+    correct_q3 = 3637
 
+    await state.reset_state(with_data=True)
 
+    counter_true = 0
+    counter_false = 0
 
+    if int(q1) == correct_q1:
+        final_q1 = q1 + '<b> + </b>'
+        counter_true += 1
+    else:
+        counter_false += 1
+        final_q1 = q1 + '<b> - </b>'
+
+    if int(q2) == correct_q2:
+        counter_true += 1
+        final_q2 = q2 + '<b> + </b>'
+    else:
+        counter_false += 1
+        final_q2 = q2 + '<b> - </b>'
+
+    if int(q3) == correct_q3:
+        counter_true += 1
+        final_q3 = q3 + '<b> + </b>'
+    else:
+        counter_false += 1
+        final_q3 = q3 + '<b> - </b>'
+
+    await message.answer('Тест завершен!\n'
+                         'Вот ваши результаты:\n\n'
+                         f'{final_q1}\n'
+                         f'{final_q2}\n'
+                         f'{final_q3}\n\n'
+                         f'Количество правильных ответов: <b>{counter_true}</b>\n'
+                         f'Количество неправильный ответов: <b>{counter_false}</b>', reply_markup=back)
 
 
 @dp.callback_query_handler(Text(equals="smile"))
