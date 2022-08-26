@@ -106,6 +106,19 @@ async def get_q2(message: types.Message, state: FSMContext):
         }
     )
     await state.set_state(GetInfo.q3)
+@dp.message_handler(state=GetInfo.q3)
+async def get_q3(message:types.Message, state: FSMContext):
+    data = await state.get_data()
+    text = message.text
+    message_id = data.get('message_id')
+
+    await dp.bot.delete_message(chat_id=message.chat.id, message_id=message_id)
+
+    mes = await message.answer('Тест завершен!'
+
+
+
+
 
 
 @dp.callback_query_handler(Text(equals="smile"))
