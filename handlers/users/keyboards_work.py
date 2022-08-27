@@ -71,7 +71,45 @@ async def get_quote(message: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(Text(equals='empty'))
 async def do_nothing(call: types.CallbackQuery):
-    await call.message.edit_text("Здесь ничего нет", reply_markup=back)
+    mes = await call.message.edit_text("Отправьте мне медиа-файл", reply_markup=back)
+    await GetInfo.media.set()
+    state = dp.current_state(chat=call.message.chat.id, user=call.message.chat.id)
+
+    await state.update_data(
+        {
+            'message_id': mes.message_id
+        }
+    )
+
+
+@dp.message_handler(state=GetInfo.media,
+                    content_types=[types.ContentType.PHOTO, types.ContentType.VIDEO, types.ContentType.VOICE, types.ContentType.VIDEO_NOTE])
+async def get_media(message: types.Message, state: FSMContext):
+    if message.photo:
+        file_id = message.photo[-1].file_id
+        await message.answer_photo(
+            photo=file_id,
+            caption=file_id
+        )
+    elif message.video:
+        file_id = message.video.file_id
+        await message.answer_video(
+            video=file_id,
+            caption=file_id
+        )
+    elif message.voice:
+        file_id = message.voice.file_id
+        await message.answer_voice(
+            voice=file_id,
+            caption=file_id,
+            reply_markup=back
+        )
+    elif message.video_note:
+        file_id = message.video_note.file_id
+        await message.answer_video_note(
+            video_note=file_id,
+            reply_markup=back
+        )
 
 
 @dp.callback_query_handler(Text(equals="test"))

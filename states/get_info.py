@@ -6,3 +6,4 @@ class GetInfo(StatesGroup):
     q2 = State()
     q3 = State()
     quote = State()
+    media = State()
