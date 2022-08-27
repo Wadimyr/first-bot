@@ -36,13 +36,37 @@ async def random_quote(call: types.CallbackQuery):
     Обработчик кнопки "Цитата"
     """
 
-    quotes = ['Всегда держи данное слово: это твоя цена.', 'Я не нарушаю правила, я играю по своим!',
-              'Мне плевать на тех, кто меня ненавидит. Я живу ради тех людей, которые меня любят.',
-              'Я не Минздрав — предупреждать не буду.', 'Цена пацана измеряется выполнением его обещаний.']
+    msg = await call.message.edit_text('Введите свою цитату.')
 
-    quote = random.choice(quotes)
+    await GetInfo.quote.set()
+    state = dp.current_state(chat=call.message.chat.id, user=call.message.chat.id)
 
-    await call.message.edit_text(quote, reply_markup=back)
+    await state.update_data(
+        {
+            'message_id': msg.message_id
+        }
+    )
+
+
+@dp.message_handler(state=GetInfo.quote)
+async def get_quote(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    message_id = data.get('message_id')
+
+    await dp.bot.delete_message(
+        chat_id=message.chat.id,
+        message_id=message_id
+    )
+
+    text = message.text
+
+    await message.answer(
+        f'Ваша цитата:\n'
+        f'{text}',
+        reply_markup=back
+    )
+
+    await state.reset_state(True)
 
 
 @dp.callback_query_handler(Text(equals='empty'))

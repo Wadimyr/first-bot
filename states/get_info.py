@@ -5,3 +5,4 @@ class GetInfo(StatesGroup):
     q1 = State()
     q2 = State()
     q3 = State()
+    quote = State()
