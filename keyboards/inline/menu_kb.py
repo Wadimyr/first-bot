@@ -8,7 +8,7 @@ menu = InlineKeyboardMarkup(row_width=3,
                                 ],
                                 [
                                     InlineKeyboardButton(text='Смайлик', callback_data='smile'),
-                                    InlineKeyboardButton(text='Тест', callback_data='test'),
-                                    InlineKeyboardButton(text='Ничего', callback_data='empty')
+                                    InlineKeyboardButton(text='Начать тестирование', callback_data='test'),
+                                    InlineKeyboardButton(text='Получить File ID', callback_data='empty')
                                 ]
                             ])
